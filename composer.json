@@ -4,16 +4,11 @@
     "type": "package",
     "package": {
       "name": "luigel/laravel5-amazon-mws",
-      "version": "dev-master",
+      "version": "master",
       "source": {
           "url": "https://github.com/luigel/mws-laravel.git",
           "type": "git",
           "reference": "master"
-      },
-      "autoload": {
-              "psr-0" : {
-                  "Weaverryan\\DangerZone" : "src"
-              }
       },
       "description": "Use Amazon's MWS web services with Laravel 5.x. Based on creacoon/amazon-mws-laravel package and modified to make it compatible with latest Laravel releases (+ bugfixes).",
       "license": "Apache-2.0",
