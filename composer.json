@@ -26,5 +26,5 @@
             "Luigel\\AmazonMws\\": "src"
         }
     },
-    "minimum-stability": "v1"
+    "minimum-stability": "stable"
 }
