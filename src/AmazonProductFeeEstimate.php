@@ -1,6 +1,8 @@
 <?php
+
+use Luigel\AmazonMws\AmazonProductsCore;
+
 /**
- * Copyright 2013-2017 CPI Group, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *
