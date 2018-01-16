@@ -1,4 +1,5 @@
 <?php
+namespace Luigel\AmazonMws;
 
 use Luigel\AmazonMws\AmazonProductsCore;
 
