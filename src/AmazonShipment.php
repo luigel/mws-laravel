@@ -145,6 +145,25 @@ class AmazonShipment extends AmazonInboundCore
     }
 
     /**
+     * Sets ShipmentName option. (Required)
+     * 
+     * This method sets the ShipmentName to be send 
+     * as request parameter
+     *
+     * @param string $s
+     * @return void|boolean
+     */
+    public function setShipmentName($s)
+    {
+        if (!$s || is_null($s)) {
+            $this->log('Tried to set shipment name to invalid values', 'Warning');
+            return false;
+        }
+
+        $this->options['InboundShipmentHeader.ShipmentName'] = $s;
+    }
+
+    /**
      * Sets the items. (Required)
      *
      * This method sets the Fulfillment Order ID to be sent in the next request.
