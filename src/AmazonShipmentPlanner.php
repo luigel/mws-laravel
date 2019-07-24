@@ -98,6 +98,24 @@ class AmazonShipmentPlanner extends AmazonInboundCore implements \Iterator
     }
 
     /**
+     * Sets the Ship To Country Code. (Required)
+     * 
+     * This method sets the ShipToCountryCode to be send
+     * as a request parameter.
+     *
+     * @param string $s
+     * @return void
+     */
+    public function setShipToCountryCode($s)
+    {
+        if (!$s || is_null($s)) {
+            $this->log("Ship to country code should be a string.", 'Warning');
+            return false;
+        }
+        $this->options['ShipToCountryCode'] = $s;
+    }
+
+    /**
      * Resets the address options.
      *
      * Since address is a required parameter, these options should not be removed
