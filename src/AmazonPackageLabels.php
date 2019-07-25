@@ -30,6 +30,8 @@ use Iterator;
 class AmazonPackageLabels extends AmazonInboundCore implements \Iterator
 {
     private $i = 0;
+    private $pdfDocument;
+    private $checksum;
 
     /**
      * AmazonShipmentPlanner fetches a shipment plan from Amazon. This is how you get a Shipment ID.
@@ -123,12 +125,9 @@ class AmazonPackageLabels extends AmazonInboundCore implements \Iterator
     }
 
     /**
-     * Sends a request to Amazon to create an Inbound Shipment Plan.
+     * Sends a request to Amazon to Get the package labels.
      *
-     * Submits a <i>CreateInboundShipmentPlan</i> request to Amazon. In order to do this,
-     * all required parameters must be set. Amazon will send back a list of Shipment Plans
-     * as a response, which can be retrieved using <i>getPlan</i>.
-     * Other methods are available for fetching specific values from the list.
+     *
      * @return boolean <b>TRUE</b> if success, <b>FALSE</b> if something goes wrong
      */
     public function fetchLabels()
@@ -155,110 +154,34 @@ class AmazonPackageLabels extends AmazonInboundCore implements \Iterator
             if (!$this->checkResponse($response)) {
                 return false;
             }
-            dd(simplexml_load_string($response['body'])->$path);
-            $xml = simplexml_load_string($response['body'])->$path->InboundShipmentPlans;
-        }
-
-        $this->parseXML($xml);
-    }
-
-    /**
-     * Parses XML response into array.
-     *
-     * This is what reads the response XML and converts it into an array.
-     * @param SimpleXMLObject $xml <p>The XML response from Amazon.</p>
-     * @return boolean <b>FALSE</b> if no XML data is found
-     */
-    protected function parseXML($xml)
-    {
-        if (!$xml) {
-            return false;
-        }
-        $i = 0;
-        foreach ($xml->children() as $x) {
-            foreach ($x->ShipToAddress->children() as $y => $z) {
-                $this->planList[$i]['ShipToAddress'][$y] = (string)$z;
-
-            }
-            $this->planList[$i]['ShipmentId'] = (string)$x->ShipmentId;
-            $this->planList[$i]['DestinationFulfillmentCenterId'] = (string)$x->DestinationFulfillmentCenterId;
-            $this->planList[$i]['LabelPrepType'] = (string)$x->LabelPrepType;
-            $j = 0;
-            foreach ($x->Items->children() as $y => $z) {
-                $this->planList[$i]['Items'][$j]['SellerSKU'] = (string)$z->SellerSKU;
-                $this->planList[$i]['Items'][$j]['Quantity'] = (string)$z->Quantity;
-                $this->planList[$i]['Items'][$j]['FulfillmentNetworkSKU'] = (string)$z->FulfillmentNetworkSKU;
-                $j++;
-
-            }
-            $i++;
+            $xml = simplexml_load_string($response['body'])->$path->TransportDocument;
+            $this->pdfDocument = $xml->PdfDocument;
+            $this->checksum = $xml->CheckSum;
         }
     }
 
     /**
-     * Returns the supply type for the specified entry.
+     * Get the pdf document
      *
-     * If <i>$i</i> is not specified, the entire list of plans will be returned.
-     * This method will return <b>FALSE</b> if the list has not yet been filled.
-     * The returned array of a single plan will contain the following fields:
-     * <ul>
-     * <li><b>ShipToAddress</b> - See <i>getAddress</i> for details.</li>
-     * <li><b>ShipmentId</b> - Unique ID for the shipment to use.</li>
-     * <li><b>DestinationFulfillmentCenterId</b> - ID for the Fulfillment Center the shipment would ship to.</li>
-     * <li><b>LabelPrepType</b> - Label preparation required.</li>
-     * <li><b>Items</b> - See <i>getItems</i> for details.</li>
-     * </ul>
-     * @param int $i [optional] <p>List index to retrieve the value from. Defaults to NULL.</p>
-     * @return array|boolean plan array, multi-dimensional array, or <b>FALSE</b> if invalid index
+     * @param $path
      */
-    public function getPlan($i = null)
+    public function savePdfDocumentZip($path)
     {
-        if (!isset($this->planList)) {
+        if (!$this->pdfDocument) {
             return false;
-        } else {
-            if (is_int($i)) {
-                return $this->planList[$i];
-            } else {
-                return $this->planList;
-            }
         }
-    }
+        try {
+            $zipBase64 = base64_decode($this->pdfDocument);
 
-    /**
-     * Returns an array of only the shipping IDs for convenient use.
-     *
-     * This method will return <b>FALSE</b> if the list has not yet been filled.
-     * @return array|boolean list of shipping IDs, or <b>FALSE</b> if list not fetched yet
-     */
-    public function getShipmentIdList()
-    {
-        if (!isset($this->planList)) {
-            return false;
-        }
-        $a = array();
-        foreach ($this->planList as $x) {
-            $a[] = $x['ShipmentId'];
-        }
-        return $a;
-    }
+            $file = $path . uniqid() . '.zip';
 
-    /**
-     * Returns the shipment ID for the specified entry.
-     *
-     * This method will return <b>FALSE</b> if the list has not yet been filled.
-     * @param int $i [optional] <p>List index to retrieve the value from. Defaults to 0.</p>
-     * @return string|boolean single value, or <b>FALSE</b> if Non-numeric index
-     */
-    public function getShipmentId($i = 0)
-    {
-        if (!isset($this->planList)) {
-            return false;
+            file_put_contents($file, $zipBase64);
+            $this->log("Successfully saved Zip PDF Document for Shipment " . $this->options['ShipmentId'] . " at $path");
+            return true;
+        } catch (Exception $e) {
+            $this->log("Unable to save Zip PDF Document for Shipment " . $this->options['ShipmentId'] . " at $path: $e", 'Urgent');
         }
-        if (is_int($i)) {
-            return $this->planList[$i]['ShipmentId'];
-        } else {
-            return false;
-        }
+        return false;
     }
 
     /**
