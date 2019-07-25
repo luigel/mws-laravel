@@ -18,7 +18,6 @@ use Luigel\AmazonMws\AmazonInboundCore;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use Iterator;
 
 /**
  *  Fetches an inbound shipment plan from Amazon.
@@ -27,7 +26,7 @@ use Iterator;
  * plan from Amazon using the provided information. In order to generate a
  * shipment plan, an address and a list of items are required.
  */
-class AmazonPackageLabels extends AmazonInboundCore implements \Iterator
+class AmazonPackageLabels extends AmazonInboundCore
 {
     private $i = 0;
     private $pdfDocument;
@@ -182,49 +181,6 @@ class AmazonPackageLabels extends AmazonInboundCore implements \Iterator
             $this->log("Unable to save Zip PDF Document for Shipment " . $this->options['ShipmentId'] . " at $path: $e", 'Urgent');
         }
         return false;
-    }
-
-    /**
-     * Iterator function
-     * @return type
-     */
-    public function current()
-    {
-        return $this->planList[$this->i];
-    }
-
-    /**
-     * Iterator function
-     */
-    public function rewind()
-    {
-        $this->i = 0;
-    }
-
-    /**
-     * Iterator function
-     * @return type
-     */
-    public function key()
-    {
-        return $this->i;
-    }
-
-    /**
-     * Iterator function
-     */
-    public function next()
-    {
-        $this->i++;
-    }
-
-    /**
-     * Iterator function
-     * @return type
-     */
-    public function valid()
-    {
-        return isset($this->planList[$this->i]);
     }
 }
 
