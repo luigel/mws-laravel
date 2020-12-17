@@ -72,6 +72,21 @@ class AmazonProductList extends AmazonProductsCore implements \Iterator
     }
 
     /**
+     * Sets the Marketplace ID. (Required)
+     *
+     * @param string $s
+     * @return boolean <b>FALSE</b> if improper input
+     */
+    public function setMarketplaceId($s)
+    {
+        if (is_string($s)) {
+            $this->options['MarketplaceId'] = $s;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Sets the request ID(s). (Required)
      *
      * This method sets the list of product IDs to be sent in the next request.
@@ -191,7 +206,4 @@ class AmazonProductList extends AmazonProductsCore implements \Iterator
     {
         return isset($this->productList[$this->i]);
     }
-
 }
-
-?>
