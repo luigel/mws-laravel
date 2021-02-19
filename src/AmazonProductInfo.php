@@ -55,7 +55,7 @@ class AmazonProductInfo extends AmazonProductsCore
      * This method sets the list of seller SKUs to be sent in the next request.
      * Setting this parameter tells Amazon to only return inventory supplies that match
      * the IDs in the list. If this parameter is set, ASINs cannot be set.
-     * @param array|string $s <p>A list of Seller SKUs, or a single SKU string. (max: 20)</p>
+     * @param string $s <p>A single SKU string.</p>
      * @return boolean <b>FALSE</b> if improper input
      */
     public function setSKUs($s)
@@ -63,19 +63,9 @@ class AmazonProductInfo extends AmazonProductsCore
         if (is_string($s)) {
             $this->resetASINs();
             $this->resetSKUs();
-            $this->options['SellerSKUList.SellerSKU.1'] = $s;
+            $this->options['SellerSKU'] = $s;
         } else {
-            if (is_array($s)) {
-                $this->resetASINs();
-                $this->resetSKUs();
-                $i = 1;
-                foreach ($s as $x) {
-                    $this->options['SellerSKUList.SellerSKU.' . $i] = $x;
-                    $i++;
-                }
-            } else {
-                return false;
-            }
+            return false;
         }
     }
 
@@ -87,11 +77,7 @@ class AmazonProductInfo extends AmazonProductsCore
      */
     private function resetSKUs()
     {
-        foreach ($this->options as $op => $junk) {
-            if (preg_match("#SellerSKUList#", $op)) {
-                unset($this->options[$op]);
-            }
-        }
+        $this->options['SellerSKU'] = null;
     }
 
     /**
@@ -158,6 +144,19 @@ class AmazonProductInfo extends AmazonProductsCore
     }
 
     /**
+     * @param string $s <p>Single condition string.</p>
+     * @return boolean <b>FALSE</b> if improper input
+     */
+    public function setMarketplaceId($s)
+    {
+        if (is_string($s)) {
+            $this->options['MarketplaceId'] = $s;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Sets the "ExcludeSelf" flag. (Optional)
      *
      * Sets whether or not the next Lowest Offer Listings request should exclude your own listings.
@@ -187,7 +186,7 @@ class AmazonProductInfo extends AmazonProductsCore
      */
     public function fetchCompetitivePricing()
     {
-        if (!array_key_exists('SellerSKUList.SellerSKU.1', $this->options) && !array_key_exists('ASINList.ASIN.1',
+        if (!array_key_exists('SellerSKU', $this->options) && !array_key_exists('ASINList.ASIN.1',
                 $this->options)
         ) {
             $this->log("Product IDs must be set in order to look them up!", 'Warning');
@@ -233,7 +232,7 @@ class AmazonProductInfo extends AmazonProductsCore
         $this->throttleGroup = 'GetCompetitivePricing';
         unset($this->options['ExcludeMe']);
         unset($this->options['ItemCondition']);
-        if (array_key_exists('SellerSKUList.SellerSKU.1', $this->options)) {
+        if (array_key_exists('SellerSKU', $this->options)) {
             $this->options['Action'] = 'GetCompetitivePricingForSKU';
             $this->resetASINs();
         } else {
@@ -254,7 +253,7 @@ class AmazonProductInfo extends AmazonProductsCore
      */
     public function fetchLowestOffer()
     {
-        if (!array_key_exists('SellerSKUList.SellerSKU.1', $this->options) && !array_key_exists('ASINList.ASIN.1',
+        if (!array_key_exists('SellerSKU', $this->options) && !array_key_exists('ASINList.ASIN.1',
                 $this->options)
         ) {
             $this->log("Product IDs must be set in order to look them up!", 'Warning');
@@ -296,7 +295,7 @@ class AmazonProductInfo extends AmazonProductsCore
             $this->throttleTime = $THROTTLE_TIME_PRODUCTPRICE;
         }
         $this->throttleGroup = 'GetLowestOfferListings';
-        if (array_key_exists('SellerSKUList.SellerSKU.1', $this->options)) {
+        if (array_key_exists('SellerSKU', $this->options)) {
             $this->options['Action'] = 'GetLowestOfferListingsForSKU';
             $this->resetASINs();
         } else {
@@ -317,7 +316,7 @@ class AmazonProductInfo extends AmazonProductsCore
      */
     public function fetchMyPrice()
     {
-        if (!array_key_exists('SellerSKUList.SellerSKU.1', $this->options) && !array_key_exists('ASINList.ASIN.1',
+        if (!array_key_exists('SellerSKU', $this->options) && !array_key_exists('ASINList.ASIN.1',
                 $this->options)
         ) {
             $this->log("Product IDs must be set in order to look them up!", 'Warning');
@@ -362,7 +361,7 @@ class AmazonProductInfo extends AmazonProductsCore
         }
         $this->throttleGroup = 'GetMyPrice';
         unset($this->options['ExcludeMe']);
-        if (array_key_exists('SellerSKUList.SellerSKU.1', $this->options)) {
+        if (array_key_exists('SellerSKU', $this->options)) {
             $this->options['Action'] = 'GetMyPriceForSKU';
             $this->resetASINs();
         } else {
@@ -383,7 +382,7 @@ class AmazonProductInfo extends AmazonProductsCore
      */
     public function fetchCategories()
     {
-        if (!array_key_exists('SellerSKUList.SellerSKU.1', $this->options) && !array_key_exists('ASINList.ASIN.1',
+        if (!array_key_exists('SellerSKU', $this->options) && !array_key_exists('ASINList.ASIN.1',
                 $this->options)
         ) {
             $this->log("Product IDs must be set in order to look them up!", 'Warning');
@@ -429,7 +428,7 @@ class AmazonProductInfo extends AmazonProductsCore
         $this->throttleGroup = 'GetProductCategories';
         unset($this->options['ExcludeMe']);
         unset($this->options['ItemCondition']);
-        if (array_key_exists('SellerSKUList.SellerSKU.1', $this->options)) {
+        if (array_key_exists('SellerSKU', $this->options)) {
             $this->options['Action'] = 'GetProductCategoriesForSKU';
             $this->resetASINs();
         } else {
