@@ -1,4 +1,5 @@
 <?php
+namespace Luigel\AmazonMws;
 
 use Luigel\AmazonMws\AmazonProductsCore;
 
@@ -24,7 +25,7 @@ use Luigel\AmazonMws\AmazonProductsCore;
  * that match the given requests. In order to do this, at least one set of
  * item-related information must be given.
  */
-class AmazonProductFeeEstimate extends AmazonProductsCore implements Iterator{
+class AmazonProductFeeEstimate extends AmazonProductsCore implements \Iterator{
     protected $i = 0;
     /**
      * AmazonProductFeeEstimate fetches a list of fee estimates from Amazon.
@@ -92,8 +93,8 @@ class AmazonProductFeeEstimate extends AmazonProductsCore implements Iterator{
                 $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.MarketplaceId'] = $x['MarketplaceId'];
                 $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.IdType'] = $x['IdType'];
                 $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.IdValue'] = $x['IdValue'];
-                $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.ListingPrice.CurrencyCode'] = $x['ListingPrice']['CurrencyCode'];
-                $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.ListingPrice.Value'] = $x['ListingPrice']['Value'];
+                $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.PriceToEstimateFees.ListingPrice.CurrencyCode'] = $x['ListingPrice']['CurrencyCode'];
+                $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.PriceToEstimateFees.ListingPrice.Amount'] = $x['ListingPrice']['Value'];
                 if (isset($x['Shipping']) && is_array($x['Shipping'])){
                     $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.Shipping.CurrencyCode'] = $x['Shipping']['CurrencyCode'];
                     $this->options['FeesEstimateRequestList.FeesEstimateRequest.'.$i.'.Shipping.Value'] = $x['Shipping']['Value'];
