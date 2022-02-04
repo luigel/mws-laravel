@@ -1,4 +1,6 @@
-<?php namespace Luigel\AmazonMws;
+<?php
+
+namespace Luigel\AmazonMws;
 
 use Luigel\AmazonMws\AmazonInboundCore;
 
@@ -146,8 +148,8 @@ class AmazonShipment extends AmazonInboundCore
 
     /**
      * Sets ShipmentName option. (Required)
-     * 
-     * This method sets the ShipmentName to be send 
+     *
+     * This method sets the ShipmentName to be send
      * as request parameter
      *
      * @param string $s

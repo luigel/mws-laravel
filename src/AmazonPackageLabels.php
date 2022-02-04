@@ -1,4 +1,6 @@
-<?php namespace Luigel\AmazonMws;
+<?php
+
+namespace Luigel\AmazonMws;
 
 use Luigel\AmazonMws\AmazonInboundCore;
 
@@ -81,7 +83,7 @@ class AmazonPackageLabels extends AmazonInboundCore
 
     /**
      * Sets the Page Type you want to print the labels on. (Required)
-     * 
+     *
      * This method sets the Page Type to be send
      * as a request parameter.
      * The string provided should have the following values:

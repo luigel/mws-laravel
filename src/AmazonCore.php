@@ -1,4 +1,6 @@
-<?php namespace Luigel\AmazonMws;
+<?php
+
+namespace Luigel\AmazonMws;
 
 use Config, Log;
 use DateTime;

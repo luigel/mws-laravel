@@ -1,17 +1,11 @@
-<?php namespace Luigel\AmazonMws;
+<?php
 
-use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+namespace Luigel\AmazonMws;
 
-class ServiceProvider extends BaseServiceProvider
+use Illuminate\Support\ServiceProvider;
+
+class AmazonMwsServiceProvider extends ServiceProvider
 {
-
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
     /**
      * Register the service provider.
      *
@@ -28,18 +22,9 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
-        $configPath = __DIR__ . '/../../config/amazon-mws.php';
-        $this->publishes([$configPath => config_path('amazon-mws.php')], 'config');
+        if ($this->app->runningInConsole()) {
+            $configPath = __DIR__ . '/../../config/amazon-mws.php';
+            $this->publishes([$configPath => config_path('amazon-mws.php')], 'config');
+        }
     }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array();
-    }
-
 }

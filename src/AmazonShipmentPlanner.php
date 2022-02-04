@@ -1,4 +1,6 @@
-<?php namespace Luigel\AmazonMws;
+<?php
+
+namespace Luigel\AmazonMws;
 
 use Luigel\AmazonMws\AmazonInboundCore;
 
@@ -99,7 +101,7 @@ class AmazonShipmentPlanner extends AmazonInboundCore implements \Iterator
 
     /**
      * Sets the Ship To Country Code. (Required)
-     * 
+     *
      * This method sets the ShipToCountryCode to be send
      * as a request parameter.
      *
